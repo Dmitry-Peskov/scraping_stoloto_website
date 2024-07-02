@@ -46,3 +46,35 @@ class BaseTicketModel(AsyncAttrs, DeclarativeBase):
         SmallInteger,
         nullable=False
     )
+
+
+class Sportlotto7x49(BaseTicketModel):
+
+    n1: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+    n2: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+    n3: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+    n4: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+    n5: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+    n6: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+    n7: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
