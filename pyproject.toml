@@ -7,6 +7,8 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
+aiosqlite = "^0.20.0"
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.31"}
 
 
 [build-system]
