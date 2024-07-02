@@ -9,24 +9,24 @@ from alembic import context
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
+from cnfg import cnfg
 config = context.config
+config.set_main_option("sqlalchemy.url", cnfg.db.DSN)
 
-# Interpret the Config file for Python logging.
+# Interpret the config file for Python logging.
 # This line sets up loggers basically.
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-from database import BaseTicketModel
-from settings import Config
-target_metadata = BaseTicketModel.metadata
-config.set_main_option("sqlalchemy.url", Config.db.DSN)
+from database import models
+target_metadata = models.BaseTicketModel.metadata
 
 
-# other values from the Config, defined by the needs of env.py,
+# other values from the config, defined by the needs of env.py,
 # can be acquired:
-# my_important_option = Config.get_main_option("my_important_option")
+# my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
 
@@ -42,7 +42,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = Config.get_main_option("sqlalchemy.url")
+    url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -68,7 +68,7 @@ async def run_async_migrations() -> None:
     """
 
     connectable = async_engine_from_config(
-        Config.get_section(Config.config_ini_section, {}),
+        config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
