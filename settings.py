@@ -7,7 +7,7 @@ import logging
 class config:
     @dataclass
     class db:
-        DSN: str = f"sqlite+aiosqlite:///{os.getcwd()}\\stoloto_database.sqlite3"
+        DSN: str = f"sqlite+aiosqlite:///{os.getcwd()}\\database\\stoloto_database.sqlite3"
         ECHO: bool = True
 
     @dataclass
