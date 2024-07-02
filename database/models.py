@@ -78,3 +78,6 @@ class Sportlotto7x49(BaseTicketModel):
         SmallInteger,
         nullable=False
     )
+
+    def __str__(self) -> str:
+        return f"""Билет "{self.__class__.__name__}" №{self.lottery_number}; Номера: {self.n1}, {self.n2}, {self.n3}, {self.n4}, {self.n5}, {self.n6}, {self.n7}"""
