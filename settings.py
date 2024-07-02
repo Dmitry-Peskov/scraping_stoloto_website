@@ -4,11 +4,13 @@ import logging
 
 
 @dataclass
-class config:
+class Config:
     @dataclass
     class db:
         DSN: str = f"sqlite+aiosqlite:///{os.getcwd()}\\database\\stoloto_database.sqlite3"
         ECHO: bool = True
+        AUTOFLUSH: bool = True
+        EXPIRE_ON_COMMIT: bool = True
 
     @dataclass
     class logging:
