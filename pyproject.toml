@@ -11,6 +11,7 @@ aiosqlite = "^0.20.0"
 sqlalchemy = {extras = ["asyncio"], version = "^2.0.31"}
 alembic = "^1.13.2"
 aiohttp = "^3.9.5"
+brotli = "^1.1.0"
 
 
 [build-system]
