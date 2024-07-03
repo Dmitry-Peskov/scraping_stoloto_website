@@ -1,10 +1,11 @@
 from typing import Type
 
+from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from cnfg import cnfg
-from custom_type import LotteryName
+from custom_type import LotteryNames, LotteryNumber
 from .models import *
 
 
@@ -12,17 +13,17 @@ class ModelsLib:
     """
     Библиотека моделей лотерейных билетов.
 
-    Предоставляет интерфейс ``get_model(name: LotteryName)``
+    Предоставляет интерфейс ``get_model(name: LotteryNames)``
     позволяющий получить по литералу конкретную модель.
     """
-    __lib: dict[LotteryName, Type[BaseTicketModel]] = {
+    __lib: dict[LotteryNames, Type[BaseTicketModel]] = {
         "Sportlotto_7x49": Sportlotto_7x49,
         "Sportlotto_6x45": Sportlotto_6x45,
         "Sportlotto_5x36": Sportlotto_5x36
     }
 
     @classmethod
-    def get_model(cls, name: LotteryName) -> Type[BaseTicketModel]:
+    def get_model(cls, name: LotteryNames) -> Type[BaseTicketModel]:
         model = cls.__lib.get(name)
         if model:
             return model
@@ -40,3 +41,22 @@ class DataBase:
             expire_on_commit=cnfg.db.EXPIRE_ON_COMMIT,
             autoflush=cnfg.db.AUTOFLUSH
         )
+
+    async def get_number_latest_lottery(
+            self,
+            name: LotteryNames
+    ) -> LotteryNumber:
+        """
+        Получить номер последнего записанного в БД тиража для выбранной лотереи
+
+        :param name: название лотереи
+        :return: номер последнего тиража в БД, если в базе нет ни одного тиража, будет возвращен 0
+        """
+        lottery = ModelsLib.get_model(name)
+        async with self.session() as session:
+            query = select(lottery).order_by(lottery.lottery_number.desc()).limit(1)
+            result = await session.execute(query)
+            lottery = result.scalar()
+            if lottery:
+                return lottery.lottery_number
+            return LotteryNumber(0)
