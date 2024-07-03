@@ -7,6 +7,14 @@ from sqlalchemy import UniqueConstraint
 
 
 class BaseTicketModel(AsyncAttrs, DeclarativeBase):
+    """
+    Базовая модель для любого лоттерейного билета.
+    Содержит в себе свойства ряд свойств, которые свойственны любому билету.
+    Основным из которых является:
+
+    ``lottery_number`` - номер тиража (первичный ключ с ограничением уникальности)
+
+    """
     @declared_attr
     def __tablename__(cls):
         return cls.__name__
@@ -47,37 +55,93 @@ class BaseTicketModel(AsyncAttrs, DeclarativeBase):
         nullable=False
     )
 
-
-class Sportlotto7x49(BaseTicketModel):
-
-    n1: Mapped[int] = mapped_column(
-        SmallInteger,
-        nullable=False
-    )
-    n2: Mapped[int] = mapped_column(
-        SmallInteger,
-        nullable=False
-    )
-    n3: Mapped[int] = mapped_column(
-        SmallInteger,
-        nullable=False
-    )
-    n4: Mapped[int] = mapped_column(
-        SmallInteger,
-        nullable=False
-    )
-    n5: Mapped[int] = mapped_column(
-        SmallInteger,
-        nullable=False
-    )
-    n6: Mapped[int] = mapped_column(
-        SmallInteger,
-        nullable=False
-    )
-    n7: Mapped[int] = mapped_column(
-        SmallInteger,
-        nullable=False
-    )
-
     def __str__(self) -> str:
-        return f"""Билет "{self.__class__.__name__}" №{self.lottery_number}; Номера: {self.n1}, {self.n2}, {self.n3}, {self.n4}, {self.n5}, {self.n6}, {self.n7}"""
+        return f"""Билет "{self.__class__.__name__}" тиража №{self.lottery_number}"""
+
+
+class Sportlotto_7x49(BaseTicketModel):
+
+    num1: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+    num2: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+    num3: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+    num4: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+    num5: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+    num6: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+    num7: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+
+
+class Sportlotto_6x45(BaseTicketModel):
+
+    num1: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+    num2: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+    num3: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+    num4: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+    num5: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+    num6: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+
+
+class Sportlotto_5x36(BaseTicketModel):
+
+    num1: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+    num2: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+    num3: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+    num4: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+    num5: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
+    extend_num: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False
+    )
