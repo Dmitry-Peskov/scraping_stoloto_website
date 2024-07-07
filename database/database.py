@@ -1,11 +1,11 @@
 from typing import Type
 
 from sqlalchemy.future import select
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+from sqlalchemy.ext.asyncio import async_sessionmaker
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from cnfg import cnfg
-from custom_type import LotteryNames, LotteryNumber
+from custom_type import LotteryNames, LotteryNumber, DateTimeElements, Numbers6x45, Numbers5x36, Numbers7x49
 from .models import *
 
 
@@ -60,3 +60,19 @@ class DataBase:
             if lottery:
                 return lottery.lottery_number
             return LotteryNumber(0)
+
+    async def write_ticket(
+            self,
+            lottery: LotteryNames,
+            num: LotteryNumber,
+            dt: DateTimeElements,
+            numbers: Numbers7x49 | Numbers5x36 | Numbers6x45
+    ):
+        model = ModelsLib.get_model(lottery)
+        ticket = model(num, *dt, *numbers)
+        async with self.session() as session:
+            session.add(ticket)
+            await session.commit()
+
+
+        
