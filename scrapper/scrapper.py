@@ -19,14 +19,14 @@ class TextConverter:
             "декабря": 12
         }
     __lottery_mask = {
-        "Sportlotto_7x49": "Результаты тиража № {0} «Спортлото «7&nbsp;из&nbsp;49»,  ",
-        "Sportlotto6x45": "Результаты тиража № {0} «Спортлото «6&nbsp;из&nbsp;45»,  ",
-        "Sportlotto_5x36": "Результаты тиража № {0} «Спортлото «5&nbsp;из&nbsp;36»,  "
+        "Sportlotto_7x49": "Результаты тиража № {0} «Спортлото «7 из 49»,  ",
+        "Sportlotto6x45": "Результаты тиража № {0} «Спортлото «6 из 45»,  ",
+        "Sportlotto_5x36": "Результаты тиража № {0} «Спортлото «5 ;из 36»,  "
     }
     __tags = {
-        "Sportlotto_7x49": {"class": "cleared game_567 game_7x49"},
-        "Sportlotto6x45": {"class": "cleared game_567 game_6x45"},
-        "Sportlotto_5x36": {"class": "cleared game_567 game_5x36"}
+        "Sportlotto_7x49": "cleared game_567 game_7x49",
+        "Sportlotto6x45": "cleared game_567 game_6x45",
+        "Sportlotto_5x36": "cleared game_567 game_5x36"
     }
 
     @classmethod
@@ -57,8 +57,8 @@ class TextConverter:
 
     @classmethod
     def extract_date_elements_from_text(cls, lottery: LotteryNames, number: LotteryNumber, html: BeautifulSoup) -> DateTimeElements:
-        tags = cls.__get_tags(lottery)
-        text = html.find("div", attrs=tags)
+        tag = cls.__get_tags(lottery)
+        text = html.find("div", {"class": str(tag)}).find("h1").text
         date_element = cls.__clear_datetime_string(lottery, number, text).split()
         day = int(date_element[0])
         month = cls.__get_num_month_by_title(date_element[1])

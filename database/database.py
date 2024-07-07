@@ -69,8 +69,57 @@ class DataBase:
             numbers: Numbers7x49 | Numbers5x36 | Numbers6x45
     ):
         model = ModelsLib.get_model(lottery)
-        ticket = model(num, *dt, *numbers)
         async with self.session() as session:
+            match lottery:
+                case "Sportlotto_7x49":
+                    ticket = model(
+                        lottery_number=num,
+                        event_time=dt.datetime,
+                        year=dt.year,
+                        month=dt.month,
+                        day=dt.day,
+                        hour=dt.hour,
+                        minute=dt.minute,
+                        num1=numbers.num1,
+                        num2=numbers.num2,
+                        num3=numbers.num3,
+                        num4=numbers.num4,
+                        num5=numbers.num5,
+                        num6=numbers.num6,
+                        num7=numbers.num7
+                    )
+                case "Sportlotto6x45":
+                    ticket = model(
+                        lottery_number=num,
+                        event_time=dt.datetime,
+                        year=dt.year,
+                        month=dt.month,
+                        day=dt.day,
+                        hour=dt.hour,
+                        minute=dt.minute,
+                        num1=numbers.num1,
+                        num2=numbers.num2,
+                        num3=numbers.num3,
+                        num4=numbers.num4,
+                        num5=numbers.num5,
+                        num6=numbers.num6,
+                    )
+                case "Sportlotto_5x36":
+                    ticket = model(
+                        lottery_number=num,
+                        event_time=dt.datetime,
+                        year=dt.year,
+                        month=dt.month,
+                        day=dt.day,
+                        hour=dt.hour,
+                        minute=dt.minute,
+                        num1=numbers.num1,
+                        num2=numbers.num2,
+                        num3=numbers.num3,
+                        num4=numbers.num4,
+                        num5=numbers.num5,
+                        extend_num=numbers.extend_num,
+                    )
             session.add(ticket)
             await session.commit()
 

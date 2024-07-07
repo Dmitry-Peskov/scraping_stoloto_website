@@ -32,11 +32,11 @@ async def main(lottery: LotteryNames) -> None:
     base_url = get_base_url(lottery)
     tasks = []
     async with aiohttp.ClientSession(headers=cnfg.HTTP_HEADERS) as client:
-        for num in range(last_number_in_db+1, last_number_in_db+10_000):
+        for num in range(last_number_in_db+2, last_number_in_db+100):
             url = base_url.format(num)
             task = asyncio.create_task(search_tickets(client, db, lottery, LotteryNumber(num), url))
             tasks.append(task)
         await asyncio.gather(*tasks)
 
 if __name__ == '__main__':
-    asyncio.run(main("Sportlotto_5x36"))
+    asyncio.run(main("Sportlotto_7x49"))
