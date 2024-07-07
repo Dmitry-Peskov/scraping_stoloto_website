@@ -1,5 +1,5 @@
 import datetime
-from custom_type import LotteryNames, LotteryNumber, DateTimeElements
+from custom_type import LotteryNames, LotteryNumber, DateTimeElements, Numbers6x45, Numbers5x36, Numbers7x49
 from bs4 import BeautifulSoup
 
 
@@ -38,6 +38,9 @@ class TextConverter:
 
     @classmethod
     def __clear_datetime_string(cls, lottery: LotteryNames, number: LotteryNumber, text: str) -> str:
+        """
+        Строку вида "Результаты тиража № 114617 «Спортлото «5 из 36», 7 июля 2024 в 20:15" приводит к виду "7 июля 2024 20:15"
+        """
         mask = cls.__lottery_mask.get(lottery)
         if mask:
             deleted = mask.format(number)
@@ -66,6 +69,19 @@ class TextConverter:
         return DateTimeElements(dt, year, month, day, hour, minute)
 
     @classmethod
-    def extract_numbers_from_text(cls, lottery: LotteryNames):
-        pass
-
+    def extract_numbers_from_text(cls, lottery: LotteryNames, html: BeautifulSoup) -> Numbers7x49 | Numbers6x45 | Numbers5x36:
+        numbers_rows = html.find_all("p", {"class": "number"})
+        numbers = [int(row.text) for row in numbers_rows]
+        match lottery:
+            case "Sportlotto_5x36":
+                extend = numbers.pop(-1)
+                numbers.sort()
+                return Numbers5x36(*numbers, extend)
+            case "Sportlotto_7x49":
+                numbers.sort()
+                return Numbers7x49(*numbers)
+            case "Sportlotto6x45":
+                numbers.sort()
+                return Numbers6x45(*numbers)
+            case _:
+                raise ValueError("Для лоттереи {0} не реализована поддержка".format(lottery))
