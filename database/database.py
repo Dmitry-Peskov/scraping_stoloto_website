@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 from cnfg import cnfg
 from custom_type import LotteryNumber
-from .models import BaseTicketModel
+from .models import Sportlotto_7x49
 
 
 class DataBase:
@@ -19,18 +19,15 @@ class DataBase:
             autoflush=cnfg.db.AUTOFLUSH
         )
 
-    async def get_number_latest_lottery(
-            self,
-            lottery_ticket: BaseTicketModel
-    ) -> LotteryNumber:
+    async def get_number_latest_lottery(self) -> LotteryNumber:
         """
         Получить номер последнего записанного в БД тиража для выбранной лотереи
 
-        :param lottery_ticket: модель лотереи
+
         :return: номер последнего тиража в БД, если в базе нет ни одного тиража, будет возвращен 0
         """
         async with self.session() as session:
-            query = select(lottery_ticket).order_by(lottery_ticket.lottery_number.desc()).limit(1)
+            query = select(Sportlotto_7x49).order_by(Sportlotto_7x49.lottery_number.desc()).limit(1)
             result = await session.execute(query)
             lottery = result.scalar()
             if lottery:
@@ -39,7 +36,7 @@ class DataBase:
 
     async def write_ticket(
             self,
-            lottery_ticket: BaseTicketModel
+            lottery_ticket: Sportlotto_7x49
     ):
         """
         Записать билет в БД

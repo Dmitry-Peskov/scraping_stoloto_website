@@ -37,7 +37,7 @@ class TextConverter:
         return datetime_string
 
     @classmethod
-    def extract_date_elements_from_text(cls, lottery: LotteryNames, number: LotteryNumber, html: BeautifulSoup) -> DateTimeElements:
+    def extract_date_elements_from_text(cls, number: LotteryNumber, html: BeautifulSoup) -> DateTimeElements:
         text = html.find("div", {"class": "cleared game_567 game_7x49"}).find("h1").text
         date_element = cls.__clear_datetime_string(number, text).split()
         day = int(date_element[0])
