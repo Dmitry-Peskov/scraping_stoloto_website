@@ -1,5 +1,5 @@
 import datetime
-from custom_type import LotteryNames, LotteryNumber, DateTimeElements, Numbers6x45, Numbers5x36, Numbers7x49
+from custom_type import LotteryNames, LotteryNumber, DateTimeElements, Numbers7x49
 from bs4 import BeautifulSoup
 
 
@@ -18,16 +18,6 @@ class TextConverter:
             "ноября": 11,
             "декабря": 12
         }
-    __lottery_mask = {
-        "Sportlotto_7x49": "Результаты тиража № {0} «Спортлото «7 из 49»,  ",
-        "Sportlotto6x45": "Результаты тиража № {0} «Спортлото «6 из 45»,  ",
-        "Sportlotto_5x36": "Результаты тиража № {0} «Спортлото «5 ;из 36»,  "
-    }
-    __tags = {
-        "Sportlotto_7x49": "cleared game_567 game_7x49",
-        "Sportlotto6x45": "cleared game_567 game_6x45",
-        "Sportlotto_5x36": "cleared game_567 game_5x36"
-    }
 
     @classmethod
     def __get_num_month_by_title(cls, title: str) -> int:
@@ -37,29 +27,19 @@ class TextConverter:
         raise ValueError("Не удалось получить номер месяца для {0}".format(title))
 
     @classmethod
-    def __clear_datetime_string(cls, lottery: LotteryNames, number: LotteryNumber, text: str) -> str:
+    def __clear_datetime_string(cls, number: LotteryNumber, text: str) -> str:
         """
         Строку вида "Результаты тиража № 114617 «Спортлото «5 из 36», 7 июля 2024 в 20:15" приводит к виду "7 июля 2024 20:15"
         """
-        mask = cls.__lottery_mask.get(lottery)
-        if mask:
-            deleted = mask.format(number)
-            datetime_string = text.replace(deleted, "").replace(" в", "")
-            return datetime_string
-        raise ValueError("Для лоттереи {0} не реализована поддержка".format(lottery))
-
-    @classmethod
-    def __get_tags(cls, lottery: LotteryNames) -> dict[str, str]:
-        tags = cls.__tags.get(lottery)
-        if tags:
-            return cls.__tags.get(lottery)
-        raise ValueError("Для лоттереи {0} не реализована поддержка".format(lottery))
+        mask = "Результаты тиража № {0} «Спортлото «7 из 49»,  "
+        deleted = mask.format(number)
+        datetime_string = text.replace(deleted, "").replace(" в", "")
+        return datetime_string
 
     @classmethod
     def extract_date_elements_from_text(cls, lottery: LotteryNames, number: LotteryNumber, html: BeautifulSoup) -> DateTimeElements:
-        tag = cls.__get_tags(lottery)
-        text = html.find("div", {"class": str(tag)}).find("h1").text
-        date_element = cls.__clear_datetime_string(lottery, number, text).split()
+        text = html.find("div", {"class": "cleared game_567 game_7x49"}).find("h1").text
+        date_element = cls.__clear_datetime_string(number, text).split()
         day = int(date_element[0])
         month = cls.__get_num_month_by_title(date_element[1])
         year = int(date_element[2])
@@ -69,19 +49,8 @@ class TextConverter:
         return DateTimeElements(dt, year, month, day, hour, minute)
 
     @classmethod
-    def extract_numbers_from_text(cls, lottery: LotteryNames, html: BeautifulSoup) -> Numbers7x49 | Numbers6x45 | Numbers5x36:
+    def extract_numbers_from_text(cls, html: BeautifulSoup) -> Numbers7x49:
         numbers_rows = html.find_all("p", {"class": "number"})
         numbers = [int(row.text) for row in numbers_rows]
-        match lottery:
-            case "Sportlotto_5x36":
-                extend = numbers.pop(-1)
-                numbers.sort()
-                return Numbers5x36(*numbers, extend)
-            case "Sportlotto_7x49":
-                numbers.sort()
-                return Numbers7x49(*numbers)
-            case "Sportlotto6x45":
-                numbers.sort()
-                return Numbers6x45(*numbers)
-            case _:
-                raise ValueError("Для лоттереи {0} не реализована поддержка".format(lottery))
+        numbers.sort()
+        return Numbers7x49(*numbers)
